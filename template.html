@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<head>
+    <title>ALMO</title>
+
+    <!-- Pythonのランタイム -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    
+    <!-- ACした時にブワーって出るアニメーション -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.3.2/dist/confetti.browser.min.js"></script>
+    
+    <!-- エディタ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    
+    <!-- Math Jax -->
+    <script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #292929; 
+            
+            color: #EAEAEA; 
+        }
+
+        h1 {
+            color: #DAB4FF; 
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(218, 180, 255, 0.3); /* タイトルにテキスト影を追加 */
+        }
+
+        p {
+            color: #BFBFBF;
+            margin-bottom: 10px;
+        }
+
+
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #514f4f;
+            border: 1px solid #fff; 
+        }
+
+
+
+        .runbutton {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bffa3; 
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .runbutton:hover {
+            background-color: #0056b3;
+        }
+
+        .problem_title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .editor {
+            width: 100%;
+            height: 300px;
+            font-size: 16px;
+            font-family: monospace;
+            background-color: #514f4f;
+            color: #fff;
+
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <script>
+
+        input = "";
+        out = "";
+        target_objectid = "";
+
+        const pyodidePromise = loadPyodide({
+            stdin: stdin_func,
+            stdout: stdout_func,
+        });
+
+        function stdout_func(answer) {
+            judge(answer);
+        }
+
+        function stdin_func() {
+            return input;
+        }
+
+        const runCode = async (objectid, inputfile, outputfile) => {
+            let pyodide = await pyodidePromise;
+            
+            // global variable
+            target_objectid = objectid;
+            input = await fetch(inputfile).then(response => response.text());
+            out = await fetch(outputfile).then(response => response.text());
+
+            let editor = ace.edit(objectid);
+            let code = editor.getValue();            
+            pyodide.runPython(code);
+        };
+
+        function judge(answer) {
+            let result_bar_id = target_objectid + "_status";
+            if (answer == out) {
+                document.getElementById(result_bar_id).style.backgroundColor = "lightgreen";
+                document.getElementById(result_bar_id).innerText = "AC";
+                confetti();
+            } else {
+                document.getElementById(result_bar_id).style.backgroundColor = "yellow";
+                document.getElementById(result_bar_id).innerText = "WA";
+            }
+        }
+    </script>
+
+    <!-- ___split___ -->
+
+</body>
+
+</html>
