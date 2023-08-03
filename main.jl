@@ -39,7 +39,11 @@ function render(block::CodeBlock)
     editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/python");
     editor.setShowPrintMargin(false);
-
+    editor.setOptions({
+      enableBasicAutocompletion: true,
+      enableSnippets: true,
+      enableLiveAutocompletion: true
+    });
     editor.setValue("");
     
     </script>
@@ -47,9 +51,16 @@ function render(block::CodeBlock)
     
     """
 
+    
+    output_area = "出力: <textarea class=\"output\" id=\"$(objectid(block))_out\" rows=\"3\" cols=\"80\"></textarea> \n"
+
+
+    expect_out_area = "答え: <textarea class=\"expect_out\" id=\"$(objectid(block))_expect_out\" rows=\"3\" cols=\"80\"></textarea> \n"
 
     run_button = "<button class=\"runbutton\" onclick=\"runCode(\'$(objectid(block))\', \'$(block.in_file)\', \'$(block.out_file)\')\"> Run </button> \n"
-    return  title * area * area_ace * "<br>" * run_button
+    return  join(
+        [title, area, area_ace, output_area, expect_out_area, run_button]
+    )
 end
 
 

@@ -13,6 +13,7 @@
     
     <!-- エディタ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
     
     <!-- Math Jax -->
     <script type="text/javascript" id="MathJax-script" async
@@ -88,6 +89,25 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
         }
 
+
+        .output {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            font-family: monospace;
+            background-color: #514f4f;
+            color: #fff;
+        }
+
+        .expect_out {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            font-family: monospace;
+            background-color: #514f4f;
+            color: #fff;
+        }
+
     </style>
 </head>
 
@@ -105,6 +125,10 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         });
 
         function stdout_func(answer) {
+            let out_id = target_objectid + "_out";
+            let expect_out_id = target_objectid + "_expect_out";
+            document.getElementById(out_id).innerText = answer;
+            document.getElementById(expect_out_id).innerText = out;
             judge(answer);
         }
 

@@ -13,6 +13,7 @@
     
     <!-- エディタ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
     
     <!-- Math Jax -->
     <script type="text/javascript" id="MathJax-script" async
@@ -88,6 +89,25 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
         }
 
+
+        .output {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            font-family: monospace;
+            background-color: #514f4f;
+            color: #fff;
+        }
+
+        .expect_out {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            font-family: monospace;
+            background-color: #514f4f;
+            color: #fff;
+        }
+
     </style>
 </head>
 
@@ -105,6 +125,10 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         });
 
         function stdout_func(answer) {
+            let out_id = target_objectid + "_out";
+            let expect_out_id = target_objectid + "_expect_out";
+            document.getElementById(out_id).innerText = answer;
+            document.getElementById(expect_out_id).innerText = out;
             judge(answer);
         }
 
@@ -138,8 +162,9 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         }
     </script>
 
-<h1>  すごいプログラムの解説 </h1>
+<h1>  \ すごい / Python入門 \すごい/ </h1>
 <br>
+Pythonでは、input関数を使って、print関数を使うことで入出力が行えます。<br>
 入力を受け取って末尾に"！"をつけて出力するプログラムを作ってみましょう。<br>
 <br>
 <h2 class="problem_title"> <div class='badge' id='5290957472598954753_status'>WJ</div>  Hello ALMO </h2> 
@@ -150,22 +175,33 @@ editor = ace.edit("5290957472598954753");
 editor.setTheme("ace/theme/monokai");
 editor.session.setMode("ace/mode/python");
 editor.setShowPrintMargin(false);
-
+editor.setOptions({
+  enableBasicAutocompletion: true,
+  enableSnippets: true,
+  enableLiveAutocompletion: true
+});
 editor.setValue("");
 
 </script>
 
 
-<br><button class="runbutton" onclick="runCode('5290957472598954753', 'in/001.txt', 'out/001.txt')"> Run </button> 
+出力: <textarea class="output" id="5290957472598954753_out" rows="3" cols="80"></textarea> 
+答え: <textarea class="expect_out" id="5290957472598954753_expect_out" rows="3" cols="80"></textarea> 
+<button class="runbutton" onclick="runCode('5290957472598954753', 'in/001.txt', 'out/001.txt')"> Run </button> 
 
 <br>
 <br>
+<br>
+<br>
+続いて、<br>
 入力として整数が空白区切りで与えるので、<br>
 総和を出力してみましょう。<br>
 <br>
 Pythonでは、sum関数を使うことで総和を計算できます！<br>
 <br>
-なんとかかんとか。。。。。。。<br>
+\[
+\sum_{i=1}^{n} a_i<br>
+\]
 <br>
 それでは実際にやってみましょう！<br>
 <br>
@@ -178,25 +214,21 @@ editor = ace.edit("7989805235841329643");
 editor.setTheme("ace/theme/monokai");
 editor.session.setMode("ace/mode/python");
 editor.setShowPrintMargin(false);
-
+editor.setOptions({
+  enableBasicAutocompletion: true,
+  enableSnippets: true,
+  enableLiveAutocompletion: true
+});
 editor.setValue("");
 
 </script>
 
 
-<br><button class="runbutton" onclick="runCode('7989805235841329643', 'in/002.txt', 'out/002.txt')"> Run </button> 
+出力: <textarea class="output" id="7989805235841329643_out" rows="3" cols="80"></textarea> 
+答え: <textarea class="expect_out" id="7989805235841329643_expect_out" rows="3" cols="80"></textarea> 
+<button class="runbutton" onclick="runCode('7989805235841329643', 'in/002.txt', 'out/002.txt')"> Run </button> 
 
 <br>
-<br>
-<br>
-<br>
-<h1>  ちなみに </h1>
-<br>
-\[
-\sum_{i=1}^{n} i = \frac{n(n+1)}{2}<br>
-\]
-<br>
-です。<br>
 
 </body>
 
