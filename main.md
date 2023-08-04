@@ -34,7 +34,7 @@ out=out/sumfunc/*.txt
 
 <br>
 
-
+## 最短のあだ名
 
 
 ところで....
@@ -110,10 +110,13 @@ $$
 \end{align}
 $$
 
+制約...
+
+考え中
 
 
 :::code
-title=String Replace
+title=Shortest Nickname
 sample_in=in/strreplace/sample.txt
 sample_out=out/strreplace/sample.txt
 in=in/strreplace/*.txt

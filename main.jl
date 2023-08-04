@@ -7,6 +7,9 @@ struct H1 <: AbstractBlock
     content::String
 end
 
+struct H2 <: AbstractBlock
+    content::String
+end
 
 struct CodeBlock <: AbstractBlock
     title::String
@@ -37,6 +40,10 @@ end
 
 function render(block::H1)
     return "<h1> $(block.content) </h1>"
+end
+
+function render(block::H2)
+    return "<h2> $(block.content) </h2>"
 end
 
 
@@ -133,7 +140,11 @@ function parse(S)
     while !(isempty(S))
         s = popfirst!(S)
         if startswith(s, "#")
-            push!(result, H1(s[2:end]))
+            if startswith(s, "##")
+                push!(result, H2(s[3:end]))
+            else
+                push!(result, H1(s[2:end]))
+            end
         elseif startswith(s, ":::code")
             block = true
             title = nothing
