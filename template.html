@@ -147,10 +147,10 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         });
 
         function stdin_func() {
-            if (!(require_judge_now)) {
-                return all_sample_input[target_objectid];
-            } else {
+            if (require_judge_now) {
                 return all_input[target_objectid][judge_idx];
+            } else {
+                return all_sample_input[target_objectid];
             }
         }
 
@@ -181,21 +181,27 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
             let code = editor.getValue();  
             let result_bar_id = target_objectid + "_status";
             let result_bar = document.getElementById(result_bar_id)
+            let out_id = target_objectid + "_sample_out";
+
+            document.getElementById(target_objectid + "_sample_out").innerText = "";
             document.getElementById(target_objectid + "_sample_out").style.color = "white";
             result_bar.innerText = "Running...";      
             
             if (require_judge) {
                 let n_input = all_input[target_objectid].length;
                 for (let i = 0; i < n_input; i++) {
-                    if (status == "TLE" || status == "MLE" || status == "RE") {
-                        result_bar.style.backgroundColor = "#ffe500";
-                        result_bar.innerText = status;
-                    }
                     judge_idx = i;
                     try {
                         await pyodide.runPythonAsync(code);
                     } catch (error) {
                         error_handle(error);
+                        result_bar.innerText = "WJ";     
+                    }
+
+                    if (status == "TLE" || status == "MLE" || status == "RE" || status == "WA") {
+                        result_bar.style.backgroundColor = "#ffe500";
+                        result_bar.innerText = status + "   " + judge_idx + "/" + (n_input);
+                        break;
                     }
                 }
 
@@ -205,21 +211,21 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
                     confetti();
                 } else {
                     result_bar.style.backgroundColor =  "#ffe500";
-                    result_bar.innerText = status;
                 } 
             } else {
                 try {
                     await pyodide.runPythonAsync(code);
-                    result_bar.innerText = "WJ"
+                    result_bar.innerText = "WJ";
                 } catch (error) {
                     error_handle(error);
+                    result_bar.innerText = "WJ";    
                 }
             }
         };
 
         function judge(answer, expect_out) {
             let result_bar_id = target_objectid + "_status";
-            if (answer == expect_out) {
+            if (answer === expect_out) {
                 status = "AC";
             } else {
                 status = "WA";
