@@ -1,3 +1,5 @@
+using Glob
+
 abstract type AbstractBlock end
 
 
@@ -7,9 +9,16 @@ end
 
 
 struct CodeBlock <: AbstractBlock
-    title::Union{Nothing,String}
-    in_file::Union{Nothing,String}
-    out_file::Union{Nothing,String}
+    title::String
+    sample_in::String
+    sample_out::String
+    in_file::Vector{String}
+    out_file::Vector{String}
+    function CodeBlock(title, in_sample, out_sample, in_files, out_files)
+        in_files = glob(in_files)
+        out_files = glob(out_files)
+        return new(title, in_sample, out_sample, in_files, out_files)
+    end
 end
 
 
@@ -31,8 +40,8 @@ end
 function render(block::CodeBlock)
     title = "<h2 class=\"problem_title\"> <div class=\'badge\' id=\'$(objectid(block))_status\'>WJ</div>  $(block.title) </h2> \n"
     
-    area = "<div class=\"editor\" id=\"$(objectid(block))\" rows=\"3\" cols=\"80\"></div> \n"
-    area_ace = """
+    editor_div = "<div class=\"editor\" id=\"$(objectid(block))\" rows=\"3\" cols=\"80\"></div> \n"
+    ace_editor = """
     <script> 
     
     editor = ace.edit(\"$(objectid(block))\"); 
@@ -50,26 +59,52 @@ function render(block::CodeBlock)
     
     
     """    
-    output_area = "出力: <textarea class=\"output\" id=\"$(objectid(block))_out\" rows=\"3\" cols=\"80\"></textarea> \n"
+    sample_in = join(readlines(block.sample_in), "\n")
+    sample_out = join(readlines(block.sample_out), "\n")
 
-
-    expect_out_area = "答え: <textarea class=\"expect_out\" id=\"$(objectid(block))_expect_out\" rows=\"3\" cols=\"80\"></textarea> \n"
-
-    input = join(readlines(block.in_file), "\n")
-    output = join(readlines(block.out_file), "\n")
+    sample_in_area = "サンプルの入力: <pre class=\"sample_in\" id=\"$(objectid(block))_sample_in\"><code>$(sample_in)</code></pre> \n"
+    sample_out_area = "出力: <pre class=\"sample_out\" id=\"$(objectid(block))_sample_out\"><code></code></pre> \n"
+    expect_out_area = "サンプルの答え: <pre class=\"expect_out\" id=\"$(objectid(block))_expect_out\"><code>$(sample_out)</code></pre> \n"
+    
 
     define_data = """
-
     <script>
-    all_input[\"$(objectid(block))\"] = \"$(input)\"
-    all_output[\"$(objectid(block))\"] = \"$(output)\"
-    </script>
-
+    all_input[\"$(objectid(block))\"] = []
+    all_output[\"$(objectid(block))\"] = []
+    all_sample_input[\"$(objectid(block))\"] = \"$(sample_in)\"
+    all_sample_output[\"$(objectid(block))\"] = \"$(sample_out)\"
     """
 
-    run_button = "<button class=\"runbutton\" onclick=\"runCode(\'$(objectid(block))\', \'$(block.in_file)\', \'$(block.out_file)\')\"> Run </button> \n"
-    return  join(
-        [title, area, area_ace, output_area, expect_out_area, run_button, define_data],
+    for in_file in block.in_file
+        define_data *= """
+        all_input[\"$(objectid(block))\"].push(\"$(join(readlines(in_file), "\\n"))\")
+        """
+    end
+
+    for out_file in block.out_file
+        define_data *= """
+        all_output[\"$(objectid(block))\"].push(\"$(join(readlines(out_file), "\\n"))\")
+        """
+    end
+
+    define_data *= "</script> \n"
+
+
+    test_run_button = "<button class=\"runbutton\" onclick=\"runCode(\'$(objectid(block))\', false)\"> Run in Testcase </button> \n"
+    submit_button = "<button class=\"submitbutton\" onclick=\"runCode(\'$(objectid(block))\', true)\"> Submit </button> \n"
+
+    return join(
+        [
+            title,
+            editor_div,
+            ace_editor,
+            sample_in_area,
+            sample_out_area,
+            expect_out_area,
+            define_data,
+            test_run_button,
+            submit_button
+        ]
     )
 end
 
@@ -94,20 +129,26 @@ function parse(S)
         if startswith(s, "#")
             push!(result, H1(s[2:end]))
         elseif startswith(s, ":::code")
+            block = true
             title = nothing
             in_file = nothing
             out_file = nothing
-            block = true
+            sample_in = nothing
+            sample_out = nothing
             while block
                 s = popfirst!(S)
-                if startswith(s, "in=")
-                    in_file = s[4:end]
-                elseif startswith(s, "title=")
+                if startswith(s, "title=")
                     title = s[7:end]
+                elseif startswith(s, "sample_in=")
+                    sample_in = s[11:end]
+                elseif startswith(s, "sample_out=")
+                    sample_out = s[12:end]
+                elseif startswith(s, "in=")
+                    in_file = s[4:end]
                 elseif startswith(s, "out=")
                     out_file = s[5:end]
                 elseif startswith(s, ":::")
-                    push!(result, CodeBlock(title, in_file, out_file))
+                    push!(result, CodeBlock(title, sample_in, sample_out, in_file, out_file))
                     block = false
                 end
             end

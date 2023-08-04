@@ -1,3 +1,9 @@
+---
+title: Python入門
+---
+
+
+
 # \ すごい / Python入門 \すごい/
 
 Pythonでは、input関数を使って、print関数を使うことで入出力が行えます。
@@ -5,11 +11,11 @@ Pythonでは、input関数を使って、print関数を使うことで入出力�
 
 :::code
 title=Hello ALMO
-in=in/001.txt
-out=out/001.txt
+sample_in=in/helloalmo/sample.txt
+sample_out=out/helloalmo/sample.txt
+in=in/helloalmo/*.txt
+out=out/helloalmo/*.txt
 :::
-
-
 
 
 続いて、
@@ -24,10 +30,11 @@ $$
 
 それでは実際にやってみましょう！
 
-
 :::code
 title=Sum Function
-in=in/002.txt
-out=out/002.txt
+sample_in=in/sumfunc/sample.txt
+sample_out=out/sumfunc/sample.txt
+in=in/sumfunc/*.txt
+out=out/sumfunc/*.txt
 :::
 
