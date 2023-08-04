@@ -90,7 +90,7 @@ function render(block::CodeBlock)
     define_data *= "</script> \n"
 
 
-    test_run_button = "<button class=\"runbutton\" onclick=\"runCode(\'$(objectid(block))\', false)\"> Run in Testcase </button> \n"
+    test_run_button = "<button class=\"runbutton\" onclick=\"runCode(\'$(objectid(block))\', false)\"> Run Sample </button> \n"
     submit_button = "<button class=\"submitbutton\" onclick=\"runCode(\'$(objectid(block))\', true)\"> Submit </button> \n"
 
     return join(
