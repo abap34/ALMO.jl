@@ -148,7 +148,6 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
         function stdin_func() {
             if (!(require_judge_now)) {
-                console.log(all_sample_input[target_objectid]);
                 return all_sample_input[target_objectid];
             } else {
                 return all_input[target_objectid][judge_idx];
@@ -183,7 +182,6 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
             let result_bar_id = target_objectid + "_status";
             let result_bar = document.getElementById(result_bar_id)
             document.getElementById(target_objectid + "_sample_out").style.color = "white";
-            result_bar.style.backgroundColor = "white";
             result_bar.innerText = "Running...";      
             
             if (require_judge) {
