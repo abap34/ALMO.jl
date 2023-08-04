@@ -119,21 +119,31 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         out = "";
         target_objectid = "";
 
+        all_input = {}
+        all_output = {}
+
         const pyodidePromise = loadPyodide({
             stdin: stdin_func,
             stdout: stdout_func,
         });
 
+        function stdin_func() {
+            document.getElementById(target_objectid + "_out").style.color = "white";
+            return all_input[target_objectid];
+        }
+
         function stdout_func(answer) {
             let out_id = target_objectid + "_out";
             let expect_out_id = target_objectid + "_expect_out";
+            let expect_out = all_output[target_objectid];
             document.getElementById(out_id).innerText = answer;
-            document.getElementById(expect_out_id).innerText = out;
-            judge(answer);
+            document.getElementById(expect_out_id).innerText = expect_out;
+            judge(answer, expect_out);
         }
 
-        function stdin_func() {
-            return input;
+        function error_handle(error) {
+            document.getElementById(target_objectid + "_out").innerText = error;
+            document.getElementById(target_objectid + "_out").style.color = "orange";
         }
 
         const runCode = async (objectid, inputfile, outputfile) => {
@@ -141,17 +151,19 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
             
             // global variable
             target_objectid = objectid;
-            input = await fetch(inputfile).then(response => response.text());
-            out = await fetch(outputfile).then(response => response.text());
 
             let editor = ace.edit(objectid);
             let code = editor.getValue();            
-            pyodide.runPython(code);
+            try {
+                await pyodide.runPythonAsync(code);
+            } catch (error) {
+                error_handle(error);
+            }
         };
 
-        function judge(answer) {
+        function judge(answer, expect_out) {
             let result_bar_id = target_objectid + "_status";
-            if (answer == out) {
+            if (answer == expect_out) {
                 document.getElementById(result_bar_id).style.backgroundColor = "lightgreen";
                 document.getElementById(result_bar_id).innerText = "AC";
                 confetti();
