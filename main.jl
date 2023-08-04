@@ -31,6 +31,9 @@ struct MathBlock <: AbstractBlock
     content :: String
 end
 
+struct InLineMathBlock <: AbstractBlock
+    content :: String
+end
 
 function render(block::H1)
     return "<h1> $(block.content) </h1>"
@@ -71,8 +74,8 @@ function render(block::CodeBlock)
     <script>
     all_input[\"$(objectid(block))\"] = []
     all_output[\"$(objectid(block))\"] = []
-    all_sample_input[\"$(objectid(block))\"] = \"$(sample_in)\"
-    all_sample_output[\"$(objectid(block))\"] = \"$(sample_out)\"
+    all_sample_input[\"$(objectid(block))\"] = \`$(sample_in)\`
+    all_sample_output[\"$(objectid(block))\"] = \`$(sample_out)\`
     """
 
     for in_file in block.in_file
@@ -120,6 +123,9 @@ function render(block::MathBlock)
         \\]"""
 end
     
+function render(block::InLineMathBlock)
+    return """\\($(block.content)\\)"""
+end
 
 
 function parse(S)
@@ -161,11 +167,15 @@ function parse(S)
                     push!(result, MathBlock(math))
                     block = false
                 else
-                    math *= s * "<br>"
+                    math *= s 
                 end
             end
         else
-            push!(result, PlainText(s * "<br>"))
+            if s == ""
+                push!(result, PlainText("<br>"))
+            else
+                push!(result, PlainText(s))
+            end
         end
     end
     return result
