@@ -48,7 +48,7 @@ end
 
 
 function render(block::CodeBlock)
-    title = "<h2 class=\"problem_title\"> <div class=\'badge\' id=\'$(objectid(block))_status\'>WJ</div>  $(block.title) </h2> \n"
+    title = "<h3 class=\"problem_title\"> <div class=\'badge\' id=\'$(objectid(block))_status\'>WJ</div>  $(block.title) </h2> \n"
     
     editor_div = "<div class=\"editor\" id=\"$(objectid(block))\" rows=\"3\" cols=\"80\"></div> \n"
     ace_editor = """
