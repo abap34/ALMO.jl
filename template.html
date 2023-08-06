@@ -61,6 +61,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
             font-weight: bold;
             color: #514f4f;
             border: 1px solid #fff; 
+            margin: 0 8px;
         }
 
 
@@ -136,6 +137,11 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
             color: #fff;
         }
 
+        .box-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 
@@ -156,7 +162,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         });
 
         function stdin_func() {
-            if (require_judge_now) {
+            if (submit_run) {
                 return all_input[target_objectid][judge_idx];
             } else {
                 return all_sample_input[target_objectid];
@@ -166,12 +172,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         function stdout_func(answer) {
             let out_id = target_objectid + "_sample_out";
             let expect_out_id = target_objectid + "_expect_out";
-            if (require_judge_now) {
-                let expect_out = all_output[target_objectid][judge_idx];
-                judge(answer, expect_out);
-            } else {
-                document.getElementById(out_id).innerText = answer;
-            }
+            outputs += answer + "\n";
         }
 
         function error_handle(error) {
@@ -182,7 +183,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         const runCode = async (objectid, require_judge) => {
             // update global variable
             target_objectid = objectid;
-            require_judge_now = require_judge;
+            submit_run = require_judge;
 
             let pyodide = await pyodidePromise;
             
@@ -201,7 +202,13 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
                 for (let i = 0; i < n_input; i++) {
                     judge_idx = i;
                     try {
+                        outputs = "";
                         await pyodide.runPythonAsync(code);
+                        let expect_out = all_output[target_objectid][judge_idx];
+                        if (outputs.slice(-1) == "\n") {
+                            outputs = outputs.slice(0, -1);
+                        }
+                        judge(outputs, expect_out);
                     } catch (error) {
                         error_handle(error);
                         result_bar.innerText = "WJ";     
@@ -223,11 +230,13 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
                 } 
             } else {
                 try {
+                    outputs = "";
                     await pyodide.runPythonAsync(code);
+                    document.getElementById(target_objectid + "_sample_out").innerText = outputs;
                     result_bar.innerText = "WJ";
                 } catch (error) {
                     error_handle(error);
-                    result_bar.innerText = "WJ";    
+                    result_bar.innerText = "RE";    
                 }
             }
         };

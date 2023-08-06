@@ -48,7 +48,7 @@ end
 
 
 function render(block::CodeBlock)
-    title = "<h3 class=\"problem_title\"> <div class=\'badge\' id=\'$(objectid(block))_status\'>WJ</div>  $(block.title) </h2> \n"
+    title = "<h3 class=\"problem_title\"> <div class=\'badge\' id=\'$(objectid(block))_status\'>WJ</div>   $(block.title) </h2> \n"
     
     editor_div = "<div class=\"editor\" id=\"$(objectid(block))\" rows=\"3\" cols=\"80\"></div> \n"
     ace_editor = """
@@ -66,15 +66,17 @@ function render(block::CodeBlock)
     editor.setValue("");
     
     </script>
+
+    <br>
     
     
     """    
     sample_in = join(readlines(block.sample_in), "\n")
     sample_out = join(readlines(block.sample_out), "\n")
 
-    sample_in_area = "サンプルの入力: <pre class=\"sample_in\" id=\"$(objectid(block))_sample_in\"><code>$(sample_in)</code></pre> \n"
-    sample_out_area = "出力: <pre class=\"sample_out\" id=\"$(objectid(block))_sample_out\"><code></code></pre> \n"
-    expect_out_area = "サンプルの答え: <pre class=\"expect_out\" id=\"$(objectid(block))_expect_out\"><code>$(sample_out)</code></pre> \n"
+    sample_in_area = "<div class=\"box-title\"> サンプルの入力 </div> <pre class=\"sample_in\" id=\"$(objectid(block))_sample_in\"><code>$(sample_in)</code></pre> \n"
+    sample_out_area = "<div class=\"box-title\"> 出力 </div>  <pre class=\"sample_out\" id=\"$(objectid(block))_sample_out\"><code></code></pre> \n"
+    expect_out_area = "<div class=\"box-title\"> サンプルの答え </div>  <pre class=\"expect_out\" id=\"$(objectid(block))_expect_out\"><code>$(sample_out)</code></pre> \n"
     
 
     define_data = """

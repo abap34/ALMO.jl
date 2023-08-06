@@ -61,6 +61,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
             font-weight: bold;
             color: #514f4f;
             border: 1px solid #fff; 
+            margin: 0 8px;
         }
 
 
@@ -136,6 +137,11 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
             color: #fff;
         }
 
+        .box-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 
@@ -156,7 +162,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         });
 
         function stdin_func() {
-            if (require_judge_now) {
+            if (submit_run) {
                 return all_input[target_objectid][judge_idx];
             } else {
                 return all_sample_input[target_objectid];
@@ -166,12 +172,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         function stdout_func(answer) {
             let out_id = target_objectid + "_sample_out";
             let expect_out_id = target_objectid + "_expect_out";
-            if (require_judge_now) {
-                let expect_out = all_output[target_objectid][judge_idx];
-                judge(answer, expect_out);
-            } else {
-                document.getElementById(out_id).innerText = answer;
-            }
+            outputs += answer + "\n";
         }
 
         function error_handle(error) {
@@ -182,7 +183,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
         const runCode = async (objectid, require_judge) => {
             // update global variable
             target_objectid = objectid;
-            require_judge_now = require_judge;
+            submit_run = require_judge;
 
             let pyodide = await pyodidePromise;
             
@@ -201,7 +202,14 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
                 for (let i = 0; i < n_input; i++) {
                     judge_idx = i;
                     try {
+                        outputs = "";
                         await pyodide.runPythonAsync(code);
+                        let expect_out = all_output[target_objectid][judge_idx];
+                        // 末尾に改行コードがあれば削除
+                        if (outputs.slice(-1) == "\n") {
+                            outputs = outputs.slice(0, -1);
+                        }
+                        judge(outputs, expect_out);
                     } catch (error) {
                         error_handle(error);
                         result_bar.innerText = "WJ";     
@@ -223,11 +231,13 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
                 } 
             } else {
                 try {
+                    outputs = "";
                     await pyodide.runPythonAsync(code);
+                    document.getElementById(target_objectid + "_sample_out").innerText = outputs;
                     result_bar.innerText = "WJ";
                 } catch (error) {
                     error_handle(error);
-                    result_bar.innerText = "WJ";    
+                    result_bar.innerText = "RE";    
                 }
             }
         };
@@ -244,14 +254,21 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
 <h1>  \ すごい / Python入門 \すごい/ </h1>
 <br>
-Pythonでは、input関数を使って、print関数を使うことで入出力が行えます。
-入力を受け取って末尾に"！"をつけて出力するプログラムを作ってみましょう。
 <br>
-<h2 class="problem_title"> <div class='badge' id='7772957615296357252_status'>WJ</div>  Hello ALMO </h2> 
-<div class="editor" id="7772957615296357252" rows="3" cols="80"></div> 
+<br>
+<h2>  入出力 </h2>
+<br>
+<br>
+Pythonは、input関数を使って入力を受け取ることができ、
+print関数を使うことで出力が行えます。
+<br>
+まずは、入力を受け取って末尾に"！"をつけて出力するプログラムを作ってみましょう。
+<br>
+<h3 class="problem_title"> <div class='badge' id='5758293135951370439_status'>WJ</div>   Hello ALMO </h2> 
+<div class="editor" id="5758293135951370439" rows="3" cols="80"></div> 
 <script> 
 
-editor = ace.edit("7772957615296357252"); 
+editor = ace.edit("5758293135951370439"); 
 editor.setTheme("ace/theme/monokai");
 editor.session.setMode("ace/mode/python");
 editor.setShowPrintMargin(false);
@@ -264,44 +281,41 @@ editor.setValue("");
 
 </script>
 
+<br>
 
-サンプルの入力: <pre class="sample_in" id="7772957615296357252_sample_in"><code>abap34</code></pre> 
-出力: <pre class="sample_out" id="7772957615296357252_sample_out"><code></code></pre> 
-サンプルの答え: <pre class="expect_out" id="7772957615296357252_expect_out"><code>abap34!</code></pre> 
+
+<div class="box-title"> サンプルの入力 </div> <pre class="sample_in" id="5758293135951370439_sample_in"><code>abap34</code></pre> 
+<div class="box-title"> 出力 </div>  <pre class="sample_out" id="5758293135951370439_sample_out"><code></code></pre> 
+<div class="box-title"> サンプルの答え </div>  <pre class="expect_out" id="5758293135951370439_expect_out"><code>abap34!</code></pre> 
 <script>
-all_input["7772957615296357252"] = []
-all_output["7772957615296357252"] = []
-all_sample_input["7772957615296357252"] = `abap34`
-all_sample_output["7772957615296357252"] = `abap34!`
-all_input["7772957615296357252"].push("world")
-all_input["7772957615296357252"].push("ALMO")
-all_input["7772957615296357252"].push("abap34")
-all_output["7772957615296357252"].push("world!")
-all_output["7772957615296357252"].push("ALMO!")
-all_output["7772957615296357252"].push("abap34!")
+all_input["5758293135951370439"] = []
+all_output["5758293135951370439"] = []
+all_sample_input["5758293135951370439"] = `abap34`
+all_sample_output["5758293135951370439"] = `abap34!`
+all_input["5758293135951370439"].push("world")
+all_input["5758293135951370439"].push("ALMO")
+all_input["5758293135951370439"].push("abap34")
+all_output["5758293135951370439"].push("world!")
+all_output["5758293135951370439"].push("ALMO!")
+all_output["5758293135951370439"].push("abap34!")
 </script> 
-<button class="runbutton" onclick="runCode('7772957615296357252', false)"> Run Sample </button> 
-<button class="submitbutton" onclick="runCode('7772957615296357252', true)"> Submit </button> 
+<button class="runbutton" onclick="runCode('5758293135951370439', false)"> Run Sample </button> 
+<button class="submitbutton" onclick="runCode('5758293135951370439', true)"> Submit </button> 
 
 <br>
 <br>
-続いて、
-入力として整数が空白区切りで与えるので、
-総和を出力してみましょう。
+<h2>  for文 </h2>
 <br>
-Pythonでは、sum関数を使うことで総和を計算できます！
+Pythonでは、for文を使って繰り返し処理を行うことができます。
 <br>
-\[
-\sum_{i=1}^{n} a_i
-\]
+入力としてnを受け取り、for文を使って、1からnまでの数字を出力するプログラムを作ってみましょう。
 <br>
-それでは実際にやってみましょう！
 <br>
-<h2 class="problem_title"> <div class='badge' id='8060011546088066234_status'>WJ</div>  Sum Function </h2> 
-<div class="editor" id="8060011546088066234" rows="3" cols="80"></div> 
+<h3 class="problem_title"> <div class='badge' id='5956594979657531305_status'>WJ</div>   For loop </h2> 
+<div class="editor" id="5956594979657531305" rows="3" cols="80"></div> 
 <script> 
 
-editor = ace.edit("8060011546088066234"); 
+editor = ace.edit("5956594979657531305"); 
 editor.setTheme("ace/theme/monokai");
 editor.session.setMode("ace/mode/python");
 editor.setShowPrintMargin(false);
@@ -314,145 +328,46 @@ editor.setValue("");
 
 </script>
 
+<br>
 
-サンプルの入力: <pre class="sample_in" id="8060011546088066234_sample_in"><code>1 2 3</code></pre> 
-出力: <pre class="sample_out" id="8060011546088066234_sample_out"><code></code></pre> 
-サンプルの答え: <pre class="expect_out" id="8060011546088066234_expect_out"><code>6</code></pre> 
+
+<div class="box-title"> サンプルの入力 </div> <pre class="sample_in" id="5956594979657531305_sample_in"><code>10</code></pre> 
+<div class="box-title"> 出力 </div>  <pre class="sample_out" id="5956594979657531305_sample_out"><code></code></pre> 
+<div class="box-title"> サンプルの答え </div>  <pre class="expect_out" id="5956594979657531305_expect_out"><code>1
+2
+3
+4
+5
+6
+7
+8
+9
+10</code></pre> 
 <script>
-all_input["8060011546088066234"] = []
-all_output["8060011546088066234"] = []
-all_sample_input["8060011546088066234"] = `1 2 3`
-all_sample_output["8060011546088066234"] = `6`
-all_input["8060011546088066234"].push("1000 1000 1000")
-all_input["8060011546088066234"].push("2 3 4")
-all_input["8060011546088066234"].push("1 2 3")
-all_output["8060011546088066234"].push("3000")
-all_output["8060011546088066234"].push("9")
-all_output["8060011546088066234"].push("6")
+all_input["5956594979657531305"] = []
+all_output["5956594979657531305"] = []
+all_sample_input["5956594979657531305"] = `10`
+all_sample_output["5956594979657531305"] = `1
+2
+3
+4
+5
+6
+7
+8
+9
+10`
+all_input["5956594979657531305"].push("3")
+all_input["5956594979657531305"].push("10")
+all_output["5956594979657531305"].push("1\n2\n3")
+all_output["5956594979657531305"].push("1\n2\n3\n4\n5\n6\n7\n8\n9\n10")
 </script> 
-<button class="runbutton" onclick="runCode('8060011546088066234', false)"> Run Sample </button> 
-<button class="submitbutton" onclick="runCode('8060011546088066234', true)"> Submit </button> 
+<button class="runbutton" onclick="runCode('5956594979657531305', false)"> Run Sample </button> 
+<button class="submitbutton" onclick="runCode('5956594979657531305', true)"> Submit </button> 
 
 <br>
 <br>
 <br>
-<br>
-<br>
-<br>
-ところで....
-<br>
-<br>
-文字列
-<br>
-\[
-S
-\]
-<br>
-と、
-文字列の組
-<br>
-\[
-T_0 = (T_{0,1}, T_{0,2}), T_1 = (T_{1,1}, T_{1,2}), \cdots,T_{n-1} = (T_{n-1,1}, T_{n-1,2}), T_n = (T_{n,1}, T_{n,2})
-\]
-<br>
-が与えられます。
-<br>
-そして、次のような操作をしてよいです。
-<br>
-Sの連続部分文字列
-<br>
-\[
-S_{i,j} 
-\]
-<br>
-について、
-<br>
-\[
-T_{k,1} = S_{i,j}
-\]
-ならばSのi文字目からj文字目までを
-\[
-T_{k,2}
-\]
-<br>
-に置き換える。
-<br>
-<br>
-この操作は何回行っても良いです。
-<br>
-この操作を行った操作によって得ることができる文字列のうち長さが最小のものの長さを求めてください。
-<br>
-例えばサンプルの入力に対しては
-<br>
-"abapthirtyfour" 
-<br>
-→ "abap34"
-<br>
-→ "abap0"
-<br>
-→ "abao0"
-<br>
-→ "a0"
-<br>
-と置換すれば、長さが最小の文字列を得ることができます。
-よって、この場合の答えは2となります。
-<br>
-入力の形式...
-<br>
-\[
-\begin{align}&S \\&N \\&T_{0,1} \quad T_{0,2} \\&T_{1,1} \quad T_{1,2} \\&\vdots \\&T_{N-1,1} \quad T_{N-1,2} \\&T_{N,1} \quad T_{N,2} \\\end{align}
-\]
-<br>
-制約...
-<br>
-\[
-\begin{align}&1 \leq |S| \leq 1000 \\&1 \leq N \leq 1000 \\&1 \leq |T_{i,1}| \leq 1000 \\&1 \leq |T_{i,2}| \leq 1000 \\
-\]
-<br>
-<br>
-<br>
-<h2 class="problem_title"> <div class='badge' id='7077556831262367809_status'>WJ</div>  String Replace </h2> 
-<div class="editor" id="7077556831262367809" rows="3" cols="80"></div> 
-<script> 
-
-editor = ace.edit("7077556831262367809"); 
-editor.setTheme("ace/theme/monokai");
-editor.session.setMode("ace/mode/python");
-editor.setShowPrintMargin(false);
-editor.setOptions({
-  enableBasicAutocompletion: true,
-  enableSnippets: true,
-  enableLiveAutocompletion: true
-});
-editor.setValue("");
-
-</script>
-
-
-サンプルの入力: <pre class="sample_in" id="7077556831262367809_sample_in"><code>abapthirtyfour
-thirtyfour 34
-34 0
-abap aba
-abap abao
-abao a</code></pre> 
-出力: <pre class="sample_out" id="7077556831262367809_sample_out"><code></code></pre> 
-サンプルの答え: <pre class="expect_out" id="7077556831262367809_expect_out"><code>2</code></pre> 
-<script>
-all_input["7077556831262367809"] = []
-all_output["7077556831262367809"] = []
-all_sample_input["7077556831262367809"] = `abapthirtyfour
-thirtyfour 34
-34 0
-abap aba
-abap abao
-abao a`
-all_sample_output["7077556831262367809"] = `2`
-all_input["7077556831262367809"].push("abapthirtyfour\nthirtyfour 34\n34 0\nabap aba\nabap abao\nabao a")
-all_output["7077556831262367809"].push("2")
-</script> 
-<button class="runbutton" onclick="runCode('7077556831262367809', false)"> Run Sample </button> 
-<button class="submitbutton" onclick="runCode('7077556831262367809', true)"> Submit </button> 
-
 <br>
 
 </body>
