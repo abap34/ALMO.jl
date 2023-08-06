@@ -17,10 +17,11 @@ struct CodeBlock <: AbstractBlock
     sample_out::String
     in_file::Vector{String}
     out_file::Vector{String}
-    function CodeBlock(title, in_sample, out_sample, in_files, out_files)
+    judge::Union{Nothing, String}
+    function CodeBlock(title, in_sample, out_sample, in_files, out_files, judge)
         in_files = glob(in_files)
         out_files = glob(out_files)
-        return new(title, in_sample, out_sample, in_files, out_files)
+        return new(title, in_sample, out_sample, in_files, out_files, judge)
     end
 end
 
@@ -39,11 +40,31 @@ struct InLineMathBlock <: AbstractBlock
 end
 
 function render(block::H1)
-    return "<h1> $(block.content) </h1>"
+    return """
+    <script>
+    page_contents.push({
+        \"type\":\"H1\",
+        \"id\":\"$(objectid(block))\",
+        \"content\":\"$(block.content)\"
+    })
+    </script>
+    
+    <h1> $(block.content) </h1>
+    """
 end
 
 function render(block::H2)
-    return "<h2> $(block.content) </h2>"
+    return """
+    <script>
+    page_contents.push({
+        \"type\":\"H2\",
+        \"id\":\"$(objectid(block))\",
+        \"content\":\"$(block.content)\"
+    })
+    </script>
+    
+    <h2> $(block.content) </h2>
+    """
 end
 
 
@@ -85,6 +106,13 @@ function render(block::CodeBlock)
     all_output[\"$(objectid(block))\"] = []
     all_sample_input[\"$(objectid(block))\"] = \`$(sample_in)\`
     all_sample_output[\"$(objectid(block))\"] = \`$(sample_out)\`
+    problem_status[\"$(objectid(block))\"] = \"WJ\"
+    page_contents.push({
+        \"type\":\"Problem\",
+        \"id\":\"$(objectid(block))\",
+        \"title\":\"$(block.title)\"
+    })
+
     """
 
     for in_file in block.in_file
@@ -105,6 +133,23 @@ function render(block::CodeBlock)
     test_run_button = "<button class=\"runbutton\" onclick=\"runCode(\'$(objectid(block))\', false)\"> Run Sample </button> \n"
     submit_button = "<button class=\"submitbutton\" onclick=\"runCode(\'$(objectid(block))\', true)\"> Submit </button> \n"
 
+
+    if block.judge === nothing
+        judge_code = """
+        <script>
+        judge_types[\"$(objectid(block))\"] = \'equal\'
+        </script>
+        """
+    else
+        judge_code = """
+        <script>
+        judge_types[\"$(objectid(block))\"] = \`$(block.judge)\`
+        </script>
+        """
+    end
+
+
+
     return join(
         [
             title,
@@ -115,7 +160,8 @@ function render(block::CodeBlock)
             expect_out_area,
             define_data,
             test_run_button,
-            submit_button
+            submit_button,
+            judge_code
         ]
     )
 end
@@ -154,6 +200,7 @@ function parse(S)
             out_file = nothing
             sample_in = nothing
             sample_out = nothing
+            judge = nothing
             while block
                 s = popfirst!(S)
                 if startswith(s, "title=")
@@ -166,8 +213,10 @@ function parse(S)
                     in_file = s[4:end]
                 elseif startswith(s, "out=")
                     out_file = s[5:end]
+                elseif startswith(s, "judge=")
+                    judge = s[7:end]
                 elseif startswith(s, ":::")
-                    push!(result, CodeBlock(title, sample_in, sample_out, in_file, out_file))
+                    push!(result, CodeBlock(title, sample_in, sample_out, in_file, out_file, judge))
                     block = false
                 end
             end
