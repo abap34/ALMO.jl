@@ -1,7 +1,13 @@
-# \ すごい / Python入門 \すごい/
+# すごい Python入門 
 
-Pythonでは、input関数を使って、print関数を使うことで入出力が行えます。
-入力を受け取って末尾に"！"をつけて出力するプログラムを作ってみましょう。
+
+## 入出力
+
+Pythonは、input関数を使って入力を受け取ることができ、
+print関数を使うことで出力が行えます。
+
+まずは、入力を受け取って末尾に"！"をつけて出力するプログラムを作ってみましょう。
+
 
 :::code
 title=Hello ALMO
@@ -12,114 +18,70 @@ out=out/helloalmo/*.txt
 :::
 
 
-続いて、
-入力として整数が空白区切りで与えるので、
-総和を出力してみましょう。
+## for文
 
-Pythonでは、sum関数を使うことで総和を計算できます！
+Pythonでは、for文を使って繰り返し処理を行うことができます。
 
-$$
-\sum_{i=1}^{n} a_i
-$$
+入力としてnを受け取り、for文を使って、1からnまでの数字を出力するプログラムを作ってみましょう。
 
-それでは実際にやってみましょう！
 
 :::code
-title=Sum Function
-sample_in=in/sumfunc/sample.txt
-sample_out=out/sumfunc/sample.txt
-in=in/sumfunc/*.txt
-out=out/sumfunc/*.txt
+title=For loop
+sample_in=in/forloop/sample.txt
+sample_out=out/forloop/sample.txt
+in=in/forloop/*.txt
+out=out/forloop/*.txt
 :::
 
-<br>
 
-## 最短のあだ名
+## ビット全探索
 
+Pythonでは、ビット全探索を行うことができます。
 
-ところで....
-
-
-文字列
+入力としてnを受け取り、0から2^n-1までの数字を2進数で出力するプログラムを作ってみましょう。
 
 $$
-S
+0 \leq n \leq 20
 $$
 
-と、
-文字列の組
+が保証されているとします。
 
-$$
-T_0 = (T_{0,1}, T_{0,2}), T_1 = (T_{1,1}, T_{1,2}), \cdots,
-T_{n-1} = (T_{n-1,1}, T_{n-1,2}), T_n = (T_{n,1}, T_{n,2})
-$$
-
-が与えられます。
-
-そして、次のような操作をしてよいです。
-
-Sの連続部分文字列
-
-$$
-S_{i,j} 
-$$
-
-について、
-
-$$
-T_{k,1} = S_{i,j}
-$$
-ならばSのi文字目からj文字目までを
-$$
-T_{k,2}
-$$
-
-に置き換える。
+:::code
+title=Bit search
+sample_in=in/bitsearch/sample.txt
+sample_out=out/bitsearch/sample.txt
+in=in/bitsearch/*.txt
+out=out/bitsearch/*.txt
+:::
 
 
-この操作は何回行っても良いです。
+## sin関数
 
-この操作を行った操作によって得ることができる文字列のうち長さが最小のものの長さを求めてください。
+sin関数をテイラー展開によって計算しましょう。
 
-例えばサンプルの入力に対しては
-
-"abapthirtyfour" 
-
-→ "abap34"
-
-→ "abap0"
-
-→ "abao0"
-
-→ "a0"
-
-と置換すれば、長さが最小の文字列を得ることができます。
-よって、この場合の答えは2となります。
-
-入力の形式...
+sin(x)のテイラー展開は以下のようになります。
 
 $$
 \begin{align}
-&S \\
-&N \\
-&T_{0,1} \quad T_{0,2} \\
-&T_{1,1} \quad T_{1,2} \\
-&\vdots \\
-&T_{N-1,1} \quad T_{N-1,2} \\
-&T_{N,1} \quad T_{N,2} \\
+\sin x &= \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)!}x^{2n+1} \\
+&= x - \frac{x^3}{3!} + \frac{x^5}{5!} - \frac{x^7}{7!} + \cdots
 \end{align}
 $$
 
-制約...
+入力としてxを受け取り、sin(x)を出力するプログラムを作ってみましょう。
 
-考え中
+$$
+-10 \leq x \leq 10
+$$
 
+が保証されているとします。 誤差は1e-3であれば許容されます。
 
 :::code
-title=Shortest Nickname
-sample_in=in/strreplace/sample.txt
-sample_out=out/strreplace/sample.txt
-in=in/strreplace/*.txt
-out=out/strreplace/*.txt
+title=Sin function
+sample_in=in/sinfunction/sample.txt
+sample_out=out/sinfunction/sample.txt
+in=in/sinfunction/*.txt
+out=out/sinfunction/*.txt
+judge=err_1e-3
 :::
 
