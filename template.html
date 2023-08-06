@@ -399,16 +399,14 @@
 
 
 
-                // アニメーション
 
                 const menuButton = document.querySelector(".menuButton");
                 const sidebar = document.querySelector(".sidebar");
 
-                let isMenuOpen = false;
+                let isMenuOpen = true;
 
                 const onClick = () => {
                     if (isMenuOpen) {
-                        // close with animation
                         gsap.to(sidebar, {
                             x: "-100%",
                             opacity: 0,
