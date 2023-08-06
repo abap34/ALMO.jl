@@ -19,6 +19,9 @@
     <script type="text/javascript" id="MathJax-script" async
         src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
+    <!-- アニメーション関連のやつ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -181,10 +184,36 @@
             font-weight: bold;
             margin-bottom: 10px;
         }
+
+        .buttonGroup {
+            position: fixed;
+            z-index: 9999999;
+            top: 20px;
+            left: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            aspect-ratio: 1 / 1;
+            width: 70px;
+            height: 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4352d83f;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
     </style>
 </head>
 
 <body>
+
+    <div class="button_group">
+        <button class="menuButton button"> Menu </button>
+    </div>
 
     <script>
         all_sample_input = {}
@@ -367,6 +396,39 @@
                         document.getElementById("content_list").appendChild(li);
                     }
                 }
+
+
+
+                // アニメーション
+
+                const menuButton = document.querySelector(".menuButton");
+                const sidebar = document.querySelector(".sidebar");
+
+                let isMenuOpen = false;
+
+                const onClick = () => {
+                    if (isMenuOpen) {
+                        // close with animation
+                        gsap.to(sidebar, {
+                            x: "-100%",
+                            opacity: 0,
+                            duration: 1
+                        });
+                    } else {
+                        gsap.to(sidebar, {
+                            x: "0",
+                            opacity: 1,
+                            duration: 1
+                        });
+                    }
+                    isMenuOpen = !isMenuOpen;
+                };
+
+                menuButton.addEventListener("click", onClick);
+
+                gsap.set(sidebar, {
+                    zIndex: 9999
+                });
             </script>
         </div>
     </div>
