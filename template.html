@@ -81,12 +81,22 @@
             font-size: 20px;
             font-weight: bold;
             margin-bottom: 10px;
+            border-bottom: solid 1px #DAB4FF;
+            color: #eddbff;
         }
 
         .content_list_h2 {
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 10px;
+            color: #DAB4FF;
+        }
+
+        .content_list_problem {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ecdaff;
         }
 
         .badge {
@@ -185,35 +195,11 @@
             margin-bottom: 10px;
         }
 
-        .buttonGroup {
-            position: fixed;
-            z-index: 9999999;
-            top: 20px;
-            left: 20px;
-        }
-
-        .button {
-            display: inline-block;
-            aspect-ratio: 1 / 1;
-            width: 70px;
-            height: 30px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            color: #fff;
-            background-color: #4352d83f;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-        }
     </style>
 </head>
 
 <body>
 
-    <div class="button_group">
-        <button class="menuButton button"> Menu </button>
-    </div>
 
     <script>
         all_sample_input = {}
@@ -363,7 +349,7 @@
                     let content = page_contents[i];
                     if (content.type == "Problem") {
                         let li = document.createElement("div");
-                        li.setAttribute("class", "content_list");
+                        li.setAttribute("class", "content_list_problem");
                         li.setAttribute("id", "problem_list_" + content.id);
                         li.innerHTML = content.title;
 
@@ -400,35 +386,42 @@
 
 
 
-                const menuButton = document.querySelector(".menuButton");
                 const sidebar = document.querySelector(".sidebar");
 
-                let isMenuOpen = true;
+                let isMenuOpen = false;
 
-                const onClick = () => {
-                    if (isMenuOpen) {
-                        gsap.to(sidebar, {
-                            x: "-100%",
-                            opacity: 0,
-                            duration: 1,
-                            ease: "power1.out"
-                        });
-                    } else {
+                gsap.to(sidebar, {
+                    x: "-200",
+                    opacity: 0,
+                    duration: 0,
+                    ease: "power1.out"
+                })
+
+                const onCursorMove = (event) => {
+                    const cursorX = event.clientX;
+
+                    if (!isMenuOpen && (cursorX <= 30)) { 
                         gsap.to(sidebar, {
                             x: "0",
                             opacity: 1,
                             duration: 1,
                             ease: "power1.out"
                         });
+                        isMenuOpen = true;
                     }
-                    isMenuOpen = !isMenuOpen;
+
+                    if (isMenuOpen && cursorX > 30) {
+                        gsap.to(sidebar, {
+                            x: "-200",
+                            opacity: 0,
+                            duration: 1,
+                            ease: "power1.out"
+                        });
+                        isMenuOpen = false;
+                    }
                 };
 
-                menuButton.addEventListener("click", onClick);
-
-                gsap.set(sidebar, {
-                    zIndex: 9999
-                });
+                window.addEventListener("mousemove", onCursorMove);
             </script>
         </div>
     </div>
